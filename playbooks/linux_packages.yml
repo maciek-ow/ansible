@@ -1,0 +1,51 @@
+ - name: Install basic linux packages and Docker
+   hosts: myhosts
+   become: yes
+
+   tasks:
+    - name: Full system update
+      yum:
+        name: '*'
+        state: latest
+        update_cache: yes
+
+    - name: Install basic utilities
+      package:
+        name:
+          - curl
+          - wget
+          - git
+          - dnf-plugins-core
+        state: latest
+
+    - name: Add Docker CE repository
+      yum_repository:
+        name: docker-ce
+        description: Docker CE Stable Repository
+        baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
+        gpgcheck: yes
+        gpgkey: https://download.docker.com/linux/centos/gpg
+        enabled: yes
+      register: docker_repo_added
+      notify: flush yum cache
+
+    - name: Install Docker engine and components
+      package:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: latest
+      when: docker_repo_added.changed  # Only install if repo was added/changed
+
+    - name: Start and enable Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+   handlers:
+   - name: flush yum cache
+     command: yum clean all

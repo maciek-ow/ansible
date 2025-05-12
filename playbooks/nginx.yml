@@ -1,0 +1,57 @@
+- name: Install Nginx from official repository
+  hosts: myhosts
+  become: yes
+  vars:
+    nginx_repo_content: |
+      [nginx]
+      name=nginx repo
+      baseurl=http://nginx.org/packages/centos/{{ ansible_distribution_major_version }}/$basearch/
+      gpgcheck=1
+      enabled=1
+      gpgkey=https://nginx.org/keys/nginx_signing.key
+      module_hotfixes=true
+
+  tasks:
+    - name: Ensure EPEL is disabled (to avoid conflicts)
+      yum_repository:
+        name: epel
+        state: absent
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+    - name: Add Nginx official repository
+      copy:
+        content: "{{ nginx_repo_content }}"
+        dest: /etc/yum.repos.d/nginx.repo
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Import Nginx GPG key
+      rpm_key:
+        key: https://nginx.org/keys/nginx_signing.key
+        state: present
+
+    - name: Install Nginx
+      package:
+        name: nginx
+        state: latest
+      notify:
+        - enable nginx
+        - start nginx
+
+    - name: Ensure Nginx service is running and enabled
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: enable nginx
+      service:
+        name: nginx
+        enabled: yes
+
+    - name: start nginx
+      service:
+        name: nginx
+        state: started
