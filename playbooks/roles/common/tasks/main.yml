@@ -1,0 +1,30 @@
+- name: Update critical packages
+  yum:
+    name: "{{ critical_packages }}"
+    state: latest
+
+- name: Install base packages
+  package:
+    name:
+      - curl
+      - wget
+      - dnf-plugins-core
+    state: present
+
+- name: Install EPEL for RHEL 9
+  block:
+    - name: Import EPEL 9 GPG key
+      rpm_key:
+        key: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-9
+        state: present
+
+    - name: Install EPEL 9
+      dnf:
+        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
+        state: present
+  rescue:
+    - name: Fallback - EPEL manual install
+      command: |
+        dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm --nogpgcheck
+      args:
+        warn: false

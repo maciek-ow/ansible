@@ -1,0 +1,17 @@
+- name: Apply common configuration
+  hosts: myhosts
+  become: yes
+  roles:
+    - common
+
+- name: Install Docker
+  hosts: myhosts
+  become: yes
+  roles:
+    - docker
+
+- name: Install Docker
+  hosts: myhosts
+  become: yes
+  roles:
+    - nginx

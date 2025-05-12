@@ -1,0 +1,7 @@
+critical_packages:
+  - kernel
+  - openssl
+  - systemd
+  - glibc
+  - bash
+  - sudo

@@ -1,0 +1,32 @@
+- name: Ensure EPEL is disabled
+  yum_repository:
+    name: epel
+    state: absent
+  when: ansible_distribution in ['CentOS', 'RedHat']
+
+- name: Add Nginx repository
+  copy:
+    content: "{{ nginx_repo_content }}"
+    dest: /etc/yum.repos.d/nginx.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Import GPG key
+  rpm_key:
+    key: https://nginx.org/keys/nginx_signing.key
+    state: present
+
+- name: Install Nginx
+  package:
+    name: nginx
+    state: latest
+  notify:
+    - enable nginx
+    - start nginx
+
+- name: Ensure service is running
+  service:
+    name: nginx
+    state: started
+    enabled: yes

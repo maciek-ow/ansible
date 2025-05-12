@@ -1,0 +1,20 @@
+- name: Add Docker CE repository
+  yum_repository:
+    name: docker-ce
+    description: Docker CE Repository
+    baseurl: https://download.docker.com/linux/centos/$releasever/$basearch/stable
+    gpgcheck: yes
+    gpgkey: https://download.docker.com/linux/centos/gpg
+    enabled: yes
+  notify: flush yum cache
+
+- name: Install Docker packages
+  package:
+    name: "{{ docker_packages }}"
+    state: latest
+
+- name: Start and enable Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
