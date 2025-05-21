@@ -1,0 +1,8 @@
+nginx_user: nginx
+web_root: /var/www/html
+server_name: localhost
+http_port: 80
+worker_connections: 1024
+keepalive_timeout: 65
+nginx_access_log: /var/log/nginx/access.log
+nginx_error_log: /var/log/nginx/error.log
