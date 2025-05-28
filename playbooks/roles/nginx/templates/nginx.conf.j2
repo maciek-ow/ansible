@@ -1,15 +1,8 @@
 user {{ nginx_user }};
 worker_processes auto;
 error_log {{ nginx_error_log }} warn;
-pid /var/run/nginx.pid;
-
-events {
-    worker_connections {{ worker_connections }};
-}
 
 http {
-    include /etc/nginx/mime.types;
-    default_type application/octet-stream;
     sendfile on;
     keepalive_timeout {{ keepalive_timeout }};
     
