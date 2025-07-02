@@ -6,3 +6,17 @@ nginx_repo_content: |
   enabled=1
   gpgkey=https://nginx.org/keys/nginx_signing.key
   module_hotfixes=true
+
+list:
+  - name: vm1
+    http_port: 8080
+    server_name: localhost
+    web_root: /var/www/html
+    nginx_access_log: /var/log/nginx/nginx_access.log
+    nginx_error_log: /var/log/nginx/nginx_error.log
+  - name: vm2
+    http_port: 81
+    server_name: localhost
+    web_root: /var/www/html
+    nginx_access_log: /var/log/nginx/nginx_custom_access.log
+    nginx_error_log: /var/log/nginx/nginx_custom_error.log

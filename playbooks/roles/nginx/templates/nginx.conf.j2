@@ -1,23 +1,12 @@
-user {{ nginx_user }};
-worker_processes auto;
-error_log {{ nginx_error_log }} warn;
-
-http {
-    sendfile on;
-    keepalive_timeout {{ keepalive_timeout }};
-    
-    include /etc/nginx/conf.d/*.conf;
-}
-
 server {
-    listen {{ http_port }} default_server;
-    server_name {{ server_name }};
+    listen {{ item.http_port }} default_server;
+    server_name {{ item.server_name }};
 
-    root {{ web_root }};
+    root {{ item.web_root }};
     index index.html index.htm;
 
-    access_log {{ nginx_access_log }};
-    error_log {{ nginx_error_log }};
+    access_log {{ item.nginx_access_log }};
+    error_log {{ item.nginx_error_log }};
 
     location / {
         try_files $uri $uri/ =404;
